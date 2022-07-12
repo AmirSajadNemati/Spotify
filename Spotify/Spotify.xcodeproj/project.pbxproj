@@ -29,6 +29,7 @@
 		5A0CA17C287C6ADA003E2C51 /* AudioTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0CA17B287C6ADA003E2C51 /* AudioTrack.swift */; };
 		5A0CA17E287C6AE0003E2C51 /* Artist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0CA17D287C6AE0003E2C51 /* Artist.swift */; };
 		5A0CA180287C6AEF003E2C51 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0CA17F287C6AEF003E2C51 /* UserProfile.swift */; };
+		5A5BB0D3287CC707003B642A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5BB0D2287CC707003B642A /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +57,7 @@
 		5A0CA17B287C6ADA003E2C51 /* AudioTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTrack.swift; sourceTree = "<group>"; };
 		5A0CA17D287C6AE0003E2C51 /* Artist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Artist.swift; sourceTree = "<group>"; };
 		5A0CA17F287C6AEF003E2C51 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		5A5BB0D2287CC707003B642A /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +145,7 @@
 				5A0CA141287C5978003E2C51 /* AppDelegate.swift */,
 				5A0CA143287C5978003E2C51 /* SceneDelegate.swift */,
 				5A0CA14A287C597A003E2C51 /* Assets.xcassets */,
+				5A5BB0D2287CC707003B642A /* Extensions.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 				5A0CA142287C5978003E2C51 /* AppDelegate.swift in Sources */,
 				5A0CA164287C6A12003E2C51 /* LibraryViewController.swift in Sources */,
 				5A0CA180287C6AEF003E2C51 /* UserProfile.swift in Sources */,
+				5A5BB0D3287CC707003B642A /* Extensions.swift in Sources */,
 				5A0CA170287C6A56003E2C51 /* PlaylistViewController.swift in Sources */,
 				5A0CA17E287C6AE0003E2C51 /* Artist.swift in Sources */,
 				5A0CA144287C5978003E2C51 /* SceneDelegate.swift in Sources */,
