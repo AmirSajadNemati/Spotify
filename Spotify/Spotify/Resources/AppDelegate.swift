@@ -29,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = window
         
         AuthManager.shared.refreshTokenIfNeeded(completion: {success in
-            print(success)
+            //print(success)
         })
         return true
     }
