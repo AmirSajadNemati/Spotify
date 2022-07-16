@@ -25,7 +25,6 @@ final class APICaller{
         createRequest(with: URL(string: Constants.baseAPIURL + "/me"),
                       type: .GET) { baseRequest in
             
-            
             let task = URLSession.shared.dataTask(with: baseRequest) { data, _, error in
                 guard let data = data , error == nil else {
                     completion(.failure(APIError.failedToGetData))
@@ -34,17 +33,17 @@ final class APICaller{
                 
                 do {
                     let result = try JSONDecoder().decode(UserProfile.self, from: data)
-                    print(result)
+                    completion(.success(result))
                 }
                 catch{
                     print(error)
                     completion(.failure(error))
                 }
-
+                
             }
             task.resume()
         }
-        }
+    }
     
     enum HttpMethod: String {
         case POST
