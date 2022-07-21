@@ -137,10 +137,10 @@ final class AuthManager{
         
     }
     
-    public func refreshTokenIfNeeded(completion: @escaping (Bool) -> Void) {
+    public func refreshTokenIfNeeded(completion: ((Bool) -> Void)?) {
         
         guard shouldRefreshToken else {
-            completion(true)
+            completion?(true)
             return
         }
         guard let refreshToken = self.refreshToken else {
@@ -173,7 +173,7 @@ final class AuthManager{
         let data = basicToken.data(using: .utf8)
         guard let base64String = data?.base64EncodedString() else {
             print("failure to get 64base")
-            completion(false)
+            completion?(false)
             return
         }
         
@@ -184,7 +184,7 @@ final class AuthManager{
             self?.isRefreshingToken = false
             guard let data = data,
                     error == nil else {
-                        completion(false)
+                        completion?(false)
                         return
                   }
             do {
@@ -192,13 +192,13 @@ final class AuthManager{
                 self?.onRefreshBlocks.forEach{ $0(result.access_token) }
                 self?.onRefreshBlocks.removeAll()
                 self?.cacheToken(result: result)
-                completion(true)
+                completion?(true)
                 
                 
             }
             catch{
                 print(error.localizedDescription)
-                completion(false)
+                completion?(false)
             }
         }
         task.resume()
