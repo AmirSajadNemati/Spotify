@@ -21,9 +21,6 @@
                                     <constraint firstAttribute="height" constant="200" id="Cbe-6N-Ac9"/>
                                     <constraint firstAttribute="width" constant="200" id="bdB-jE-A2U"/>
                                 </constraints>
-                                <string key="highlightedImage" base64-UTF8="YES">
-CQkJCQ
-</string>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -40,11 +37,6 @@ CQkJCQ
         </scene>
     </scenes>
     <resources>
-        <image width="128" height="128">
-            <string key="name" base64-UTF8="YES">
-CQkJCQ
-</string>
-        </image>
         <image name="logo" width="1024" height="1024"/>
     </resources>
 </document>

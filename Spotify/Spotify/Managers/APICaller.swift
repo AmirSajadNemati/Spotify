@@ -55,7 +55,7 @@ final class APICaller{
     // MARK : - API Caller Functions
     public func getReccomendations(genres: Set<String>, completion: @escaping ((Result<RecommendationsResponse, Error>) -> Void)) {
         let seeds = genres.joined(separator: ",")
-                createRequest(with: URL(string: Constants.baseAPIURL + "/recommendations?seed_genres=\(seeds)&limit=2"),
+                createRequest(with: URL(string: Constants.baseAPIURL + "/recommendations?seed_genres=\(seeds)&limit=10"),
                       type: .GET) { request in
             let task = URLSession.shared.dataTask(with: request) { data, _, error in
                 guard let data = data, error == nil else {
@@ -65,7 +65,6 @@ final class APICaller{
                 
                 do {
                     let result = try JSONDecoder().decode(RecommendationsResponse.self, from: data)
-                    print(result)
                     completion(.success(result))
                 }
                 catch {
@@ -102,7 +101,7 @@ final class APICaller{
         })
     }
     public func getFeaturedPlaylists(completion: @escaping (Result<FeaturedPlaylistsResponse, Error>) -> Void){
-        createRequest(with: URL(string: Constants.baseAPIURL + "/browse/featured-playlists?limit=2"),
+        createRequest(with: URL(string: Constants.baseAPIURL + "/browse/featured-playlists?limit=30"),
                       type: .GET) { request in
             let task = URLSession.shared.dataTask(with: request) { data, _, error in
                 guard let data = data, error == nil else {
@@ -128,7 +127,7 @@ final class APICaller{
     
     
     public func getNewReleases(completion: @escaping (Result<NewReleaseResponse, Error>) -> Void) {
-        createRequest(with: URL(string: Constants.baseAPIURL + "/browse/new-releases?limit=2"),
+        createRequest(with: URL(string: Constants.baseAPIURL + "/browse/new-releases?limit=30"),
                       type: .GET) { request in
             let task = URLSession.shared.dataTask(with: request) { data, _, error in
                 guard let data = data , error == nil else {
@@ -138,7 +137,7 @@ final class APICaller{
 
                 do {
                     let result = try JSONDecoder().decode(NewReleaseResponse.self, from: data)
-                    print(result)
+                    //print(result)
                     completion(.success(result))
                 }
                 catch {
