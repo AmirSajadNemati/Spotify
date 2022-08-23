@@ -29,8 +29,12 @@ class HomeViewController: UIViewController {
         spinner.hidesWhenStopped = true
         return spinner
     }()
-    
+    // MARK : - Properties
     private var sections = [BrowseSectionType]()
+    
+    private var newAlbums: [Album] = []
+    private var playLists: [PlayList] = []
+    private var tracks: [AudioTrack] = []
     // MARK : - Ovveride Functions
     
     override func viewDidLoad() {
@@ -199,6 +203,7 @@ class HomeViewController: UIViewController {
             return section
         }
         
+        
     }
     
     private func fetchData(){
@@ -285,6 +290,10 @@ class HomeViewController: UIViewController {
         newAlbums: [Album],
         playLists: [PlayList],
         tracks: [AudioTrack]) {
+            
+            self.newAlbums = newAlbums
+            self.playLists = playLists
+            self.tracks = tracks
 
             // Configure Modles
             sections.append(.NewReleases(viewModel: newAlbums.compactMap({
@@ -303,7 +312,7 @@ class HomeViewController: UIViewController {
             sections.append(.RecommendedTracks(viewModel: tracks.compactMap({
                 return RecommendedTrackViewModel(artistName: $0.artists.first?.name ?? "",
                                                  trackName: $0.name,
-                                                 artworkURL: URL(string: $0.album.images.first?.url ?? ""))
+                                                 artworkURL: URL(string: $0.album?.images.first?.url ?? ""))
             })))
             collectionView.reloadData()
         }
@@ -347,7 +356,6 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                     return UICollectionViewCell()
                 }
             let viewModel = viewModels[indexPath.row]
-            print(viewModel.artistName)
             cell.configureViewModel(with: viewModel)
             return cell
             
@@ -375,6 +383,32 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         }
         
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let section = sections[indexPath.section]
+        switch section {
+        case .FeaturedPlaylists:
+            let playlist = playLists[indexPath.row]
+            let vc = PlaylistViewController(playlist: playlist)
+            vc.title = playlist.name
+            vc.view.backgroundColor = .systemBackground
+            vc.navigationItem.largeTitleDisplayMode = .never
+            navigationController?.pushViewController(vc, animated: true)
+        case .NewReleases:
+            let album = newAlbums[indexPath.row]
+            let vc = AlbumViewController(album: album)
+            vc.title = album.name
+            vc.view.backgroundColor = .systemBackground
+            vc.navigationItem.largeTitleDisplayMode = .never
+            navigationController?.pushViewController(vc, animated: true)
+            
+        case .RecommendedTracks:
+            break
+        }
+        
+    }
+    
+   
     
     
 }
