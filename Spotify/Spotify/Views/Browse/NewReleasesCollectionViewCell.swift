@@ -72,7 +72,7 @@ class NewReleasesCollectionViewCell: UICollectionViewCell {
         // Artist Name Label
         artistNameLabel.sizeToFit()
         artistNameLabel.frame = CGRect(x: albumCoverImageView.right + 10,
-                                       y: albumNameLabel.height + 5,
+                                       y: albumNameLabel.height + 10,
                                        width: contentView.width - albumCoverImageView.width - 20,
                                        height: artistNameLabel.height)
         
