@@ -23,7 +23,7 @@ enum BrowseSectionType {
         }
     }
 }
-
+	
 class HomeViewController: UIViewController {
 
     // MARK : - SubViews

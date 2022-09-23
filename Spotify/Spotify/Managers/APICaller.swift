@@ -28,6 +28,7 @@ final class APICaller{
             
             let task = URLSession.shared.dataTask(with: baseRequest) { data, _, error in
                 guard let data = data , error == nil else {
+                    
                     completion(.failure(APIError.failedToGetData))
                     return
                 }
@@ -192,6 +193,55 @@ final class APICaller{
                     print(error)
                     completion(.failure(error))
                     
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    public func getCategories(completion: @escaping (Result<[Category], Error>) -> Void){
+        createRequest(with: URL(string: Constants.baseAPIURL + "/browse/categories?limit=40"),
+                      type: .GET) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                do{
+                    let result = try JSONDecoder().decode(AllCategoriesResponse.self, from: data)
+                    //try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+                    print(result.categories.items)
+                    completion(.success(result.categories.items))
+                }
+                catch {
+                    print(error)
+                    print("here too")
+                    
+                    completion(.failure(error))
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    public func getCategoriesPlaylists(category: Category, completion: @escaping (Result<[PlayList], Error>) -> Void){
+        createRequest(with: URL(string: Constants.baseAPIURL + "/browse/categories/\(category.id)/playlists?limit=20"),
+                      type: .GET) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    
+                    return
+                }
+                do{
+                    let result = try JSONDecoder().decode(CategoryPlaylistsResponse.self, from: data)
+                    // let result = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+                    //print(result)
+                    completion(.success(result.playlists.items))
+                }
+                catch {
+                    print(error)
+                    completion(.failure(error))
                 }
             }
             task.resume()
