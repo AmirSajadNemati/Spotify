@@ -57,7 +57,7 @@ final class APICaller{
     public func getReccomendations(genres: Set<String>, completion: @escaping ((Result<RecommendationsResponse, Error>) -> Void)) {
         let seeds = genres.joined(separator: ",")
                 createRequest(with: URL(string: Constants.baseAPIURL + "/recommendations?seed_genres=\(seeds)&limit=10"),
-                      type: .GET) { request in
+                              type: .GET) { request in
             let task = URLSession.shared.dataTask(with: request) { data, _, error in
                 guard let data = data, error == nil else {
                     completion(.failure(APIError.failedToGetData))
@@ -210,7 +210,7 @@ final class APICaller{
                 do{
                     let result = try JSONDecoder().decode(AllCategoriesResponse.self, from: data)
                     //try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
-                    print(result.categories.items)
+                    //print(result.categories.items)
                     completion(.success(result.categories.items))
                 }
                 catch {
@@ -247,6 +247,36 @@ final class APICaller{
             task.resume()
         }
     }
+    
+    public func search(with query: String, completion: @escaping (Result<[SearchResult], Error>) -> Void) {
+        createRequest(with: URL(string: Constants.baseAPIURL + "/search?type=album,artist,playlist,track&q=\(query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&limit=10"),
+                      type: .GET ) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                do{
+                    let result = try JSONDecoder().decode(SearchResultResponse.self, from: data)
+                    var searchResults : [SearchResult] = []
+                    searchResults.append(contentsOf: result.tracks.items.compactMap({.track(model: $0)}))
+                    searchResults.append(contentsOf: result.albums.items.compactMap({.album(model: $0)}))
+                    searchResults.append(contentsOf: result.playlists.items.compactMap({.playlist(model: $0)}))
+                    searchResults.append(contentsOf: result.artists.items.compactMap({.artist(model: $0)}))
+                    
+                    completion(.success(searchResults))
+                }
+                catch {
+                    print("error here")
+                    completion(.failure(error))
+                }
+            }
+            task.resume()
+                
+                
+            }
+        }
+    
     // MARK : - Private
     
     

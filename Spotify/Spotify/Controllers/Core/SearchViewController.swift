@@ -7,14 +7,14 @@
 
 import UIKit
 
-class SearchViewController: UIViewController, UISearchResultsUpdating {
+class SearchViewController: UIViewController, UISearchResultsUpdating, UISearchBarDelegate {
    
     // MARK : - Properties & Subviews
     
     var categories = [Category]()
     let searchController: UISearchController = {
         
-        let vc = UISearchController(searchResultsController: SearchResultViewController())
+        let vc = UISearchController(searchResultsController: SearchResultsViewController())
         vc.searchBar.placeholder = "Songs, Artists, Albums"
         vc.searchBar.searchBarStyle = .minimal
         vc.definesPresentationContext = true
@@ -48,6 +48,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating {
         view.backgroundColor = .systemBackground
         
         searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
         navigationItem.searchController = searchController
         
         view.addSubview(collectionView)
@@ -62,7 +63,6 @@ class SearchViewController: UIViewController, UISearchResultsUpdating {
                     self?.categories = categories
                     self?.collectionView.reloadData()
                 case .failure(let error):
-                    print("Here 2")
                     print(error)
                 }
             }
@@ -70,15 +70,29 @@ class SearchViewController: UIViewController, UISearchResultsUpdating {
     }
     
     // MARK : - Functions
-    
-    func updateSearchResults(for searchController: UISearchController) {
-        guard let resultcontroler = searchController.searchResultsController as? SearchResultViewController,
-              let query = searchController.searchBar.text,
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let resultcontroler = searchController.searchResultsController as? SearchResultsViewController,
+              let query = searchBar.text,
               !query.trimmingCharacters(in: .whitespaces).isEmpty else {
                   return
               }
-        print(query)
+        
+        resultcontroler.delegate = self
+        
         // Perform Search
+        APICaller.shared.search(with: query) { result in
+            DispatchQueue.main.async {
+                switch result{
+                case .success(let results):
+                    resultcontroler.update(with: results)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        }
+    }
+    func updateSearchResults(for searchController: UISearchController) {
+        
     }
 
     override func viewDidLayoutSubviews() {
@@ -86,6 +100,13 @@ class SearchViewController: UIViewController, UISearchResultsUpdating {
         collectionView.frame = view.bounds
     }
 
+}
+
+extension SearchViewController: SearchResultsViewControllerDelegate{
+    func showResults(_ controller: UIViewController) {
+        controller.navigationItem.largeTitleDisplayMode = .never
+        navigationController?.pushViewController(controller, animated: true)
+    }
 }
 
 extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSource {
