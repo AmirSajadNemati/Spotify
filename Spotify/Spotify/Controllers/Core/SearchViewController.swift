@@ -98,7 +98,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UISearchB
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         collectionView.frame = view.bounds
-    }
+    }	
 
 }
 
