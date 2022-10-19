@@ -185,7 +185,7 @@ class SearchResultsViewController: UIViewController ,UITableViewDelegate, UITabl
             let vc = AlbumViewController(album: model)
             delegate?.showResults(vc)
         case .track(let model):
-            PlaybackPresenter.startPlayback(from: self, track: model)
+            PlaybackPresenter.shared.startPlayback(from: self, track: model)
         }
         
         

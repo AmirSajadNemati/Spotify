@@ -165,14 +165,14 @@ extension PlaylistViewController: UICollectionViewDelegate, UICollectionViewData
         collectionView.deselectItem(at: indexPath, animated: true)
         // play song
         let index = tracks[indexPath.row]
-        PlaybackPresenter.startPlayback(from: self, track: index)
+        PlaybackPresenter.shared.startPlayback(from: self, track: index)
     }
 }
   
 extension PlaylistViewController: PlayListHeaderCollectionReusableViewDelegate {
     func PlayListHeaderCollectionReusableViewDidTapPlayAll(_ header: PlayListHeaderCollectionReusableView) {
         // start playlist in  queue
-        PlaybackPresenter.startPlayback(from: self, tracks: tracks)
+        PlaybackPresenter.shared.startPlayback(from: self, tracks: tracks)
         
     }
 }
