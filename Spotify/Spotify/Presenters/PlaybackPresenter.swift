@@ -27,15 +27,14 @@ final class PlaybackPresenter: PlayerDataSource {
     private var track: AudioTrack?
     private var tracks = [AudioTrack]()
     
+    var index = 0
+    
+    var playerVC: PlayerViewController?
+    
     var currentTrack: AudioTrack? {
         if let track = track, tracks.isEmpty {
             return track
         } else if let player = self.queuePlayer,  !tracks.isEmpty {
-            let item = player.currentItem
-            let items = player.items()
-            guard let index = items.firstIndex(where: { $0 == item}) else {
-                return nil
-            }
             return tracks[index]
         }
         
@@ -62,6 +61,7 @@ final class PlaybackPresenter: PlayerDataSource {
             viewController.present(UINavigationController(rootViewController: vc), animated: true) { [weak self] in
                 self?.singlePlayer?.play()
             }
+            self.playerVC = vc
             
             
         }
@@ -85,6 +85,7 @@ final class PlaybackPresenter: PlayerDataSource {
             let vc = PlayerViewController()
             viewController.present(UINavigationController(rootViewController: vc), animated: true)
             
+            self.playerVC = vc
         }
     
     
@@ -114,6 +115,9 @@ extension PlaybackPresenter: PlayerViewControllerDelegate{
         }
         else if let player = queuePlayer {
             self.queuePlayer?.advanceToNextItem()
+            index += 1
+            print(index)
+            playerVC?.refreshUI()
         }
     }
     

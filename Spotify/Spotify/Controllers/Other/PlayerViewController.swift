@@ -24,7 +24,6 @@ class PlayerViewController: UIViewController {
     
     private var imageView: UIImageView = {
         let image = UIImageView()
-        image.backgroundColor = .blue
         image.contentMode = .scaleAspectFit
         return image
     }()
@@ -61,6 +60,10 @@ class PlayerViewController: UIViewController {
         controlsView.configure(with: PlayerControlsViewViewModel(
             title: dataSource?.songName ?? "",
             subtitle: dataSource?.subtitle ?? ""))
+    }
+    
+    func refreshUI(){
+        configure()
     }
 
     private func configureButtons(){
