@@ -11,7 +11,12 @@ class LibraryPlaylistsViewController: UIViewController {
 
     // MARK : - Properties
     
+    public var userProfile: UserProfile?
+
+    
     private let noplaylitsView = ActionLabelView()
+    
+    public var selectionHandler: ((PlayList) -> Void)?
     
     private var playlists = [PlayList]()
     
@@ -34,8 +39,15 @@ class LibraryPlaylistsViewController: UIViewController {
         
         setUoNoPlaylistLabelView()
         fetchdata()
+        
+        if selectionHandler != nil {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(didTapCancel))
+        }
        
         
+    }
+    @objc func didTapCancel(){
+        dismiss(animated: true, completion: nil)
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -150,10 +162,31 @@ extension LibraryPlaylistsViewController: UITableViewDelegate, UITableViewDataSo
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let playlist = playlists[indexPath.row]
+        guard selectionHandler == nil else{
+            selectionHandler?(playlist)
+            dismiss(animated: true, completion: nil)
+            return
+        }
         let vc = PlaylistViewController(playlist: playlist)
         vc.title = playlist.name
         vc.view.backgroundColor = .systemBackground
         vc.navigationItem.largeTitleDisplayMode = .never
+            APICaller.shared.getCurrentUserProfile {[weak self] result in
+                DispatchQueue.main.async {
+                        switch result{
+                        case .success(let profile):
+                            if playlist.owner.display_name == profile.display_name {
+                                vc.isOwner = true
+                            }
+                            print("\(playlist.owner.display_name) = \(profile.display_name)")
+                        case .failure(let error):
+                            print(error.localizedDescription)
+                        }
+                }
+            }
+        
+        
+        
         navigationController?.pushViewController(vc, animated: true)
         
     }

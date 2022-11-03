@@ -9,6 +9,8 @@ import UIKit
 
 class PlaylistViewController: UIViewController {
 
+    public var isOwner = false
+    
     private let playlist: PlayList
    
     private var tracks = [AudioTrack]()
@@ -65,6 +67,67 @@ class PlaylistViewController: UIViewController {
             target: self,
             action: #selector(didTapShare)
         )
+        
+        addLongTapGesture()
+        
+        
+    }
+    
+    // LongTapGesture
+    private func addLongTapGesture(){
+        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
+        collectionView.isUserInteractionEnabled = true
+        collectionView.addGestureRecognizer(gesture)
+    }
+    
+    @objc func didLongPress(_ gesture: UILongPressGestureRecognizer){
+        guard gesture.state == .began else {
+            return
+        }
+        let touchPoint = gesture.location(in: collectionView)
+        guard let indexPath = collectionView.indexPathForItem(at: touchPoint) else {
+            return
+        }
+        
+        let model = tracks[indexPath.row]
+        
+        let actionSheet = UIAlertController(
+            title: model.name,
+            message: "Would you like to remove the selected song from this playlist?",
+            preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(
+            UIAlertAction(
+                title: "Cancel",
+                style: .cancel,
+                handler: nil))
+            
+        actionSheet.addAction(
+            UIAlertAction(
+                title: "Remove",
+                style: .destructive,
+                handler: { [weak self] _ in
+                    guard let strongSelf = self else {
+                        return
+                    }
+                     
+                        APICaller.shared.removeTrackFromPLaylist(
+                            track: model,
+                            playlist: strongSelf.playlist) { success in
+                                DispatchQueue.main.async {
+                                    if success {
+                                        strongSelf.tracks.remove(at: indexPath.row)
+                                        strongSelf.viewModels.remove(at: indexPath.row)
+                                        strongSelf.collectionView.reloadData()
+                                    } else {
+                                        print("Failed to remove track!")
+                                    }
+                                }
+                            }
+                    
+                }))
+        
+        present(actionSheet, animated: true, completion: nil)
     }
     
     @objc func didTapShare(){
