@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AVFoundation
 
 final class APICaller{
     
@@ -197,6 +198,77 @@ final class APICaller{
         }
     }
     
+    public func getCurrentUserPlaylists( completion: @escaping (Result<[PlayList], Error>) -> Void) {
+        createRequest(with: URL(string: Constants.baseAPIURL + "/me/playlists/?limit=20"),
+                      type: .GET) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                do {
+                    let result = try JSONDecoder().decode(LibraryPlaylistsResponse.self, from: data)
+                    completion(.success(result.items))
+                } catch {
+                    completion(.failure(error))
+                }
+ 
+            }
+            task.resume()
+        }
+    }
+    public func createPlaylist(name: String, completion: @escaping (Bool) -> Void ){
+        getCurrentUserProfile { [weak self] result in
+            switch result{
+            case .success(let profile):
+                let urlString = URL(string: Constants.baseAPIURL + "/users/\(profile.id)/playlists")
+                print(urlString)
+                self?.createRequest(with: urlString,
+                                    type: .POST,
+                                    completion: { baseRequest in
+                    var request  = baseRequest
+                    let json = [
+                        "name": name
+                    ]
+                    request.httpBody = try? JSONSerialization.data(withJSONObject: json, options: .fragmentsAllowed)
+                    print("Starting Creation...")
+                    
+                    let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                        
+                        guard let data = data, error == nil else {
+                            completion(false)
+                            return
+                        }
+                        
+                        do {
+                            let result = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+                            if let response = result as? [String: Any], response["id"] as? String != nil {
+                                print("Created!")
+                                completion(true)
+                            } else {
+                                print("Failed to get id.")
+                                completion(false)
+                            }
+                        } catch {
+                            print(error.localizedDescription)
+                            completion(false)
+                        }
+                    }
+                    task.resume()
+                })
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+        
+    }
+    public func addTrackToPlaylist(track: AudioTrack, playlist: PlayList, completion: @escaping (Bool) -> Void){
+        
+    }
+    public func removeTrackFromPLaylist(track: AudioTrack, playlist: PlayList, completion: @escaping (Bool) -> Void){
+        
+    }
+    
     public func getCategories(completion: @escaping (Result<[Category], Error>) -> Void){
         createRequest(with: URL(string: Constants.baseAPIURL + "/browse/categories?limit=40"),
                       type: .GET) { request in
@@ -274,6 +346,8 @@ final class APICaller{
                 
             }
         }
+    
+    
     
     // MARK : - Private
     
