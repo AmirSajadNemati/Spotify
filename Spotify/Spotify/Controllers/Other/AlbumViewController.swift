@@ -42,6 +42,43 @@ class AlbumViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         
+       fetchData()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .action,
+            target: self,
+            action: #selector(didTapAciton))
+    }
+    
+    @objc func didTapAciton(){
+        let actionSheet = UIAlertController(
+            title: album.name,
+            message: "Actions",
+            preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(
+            title: "Cancel",
+            style: .cancel,
+            handler: nil))
+        
+        actionSheet.addAction(UIAlertAction(
+            title: "Save Album",
+            style: .default,
+            handler: { [weak self] _ in
+                guard let strongSelf = self else {
+                    return
+                }
+                APICaller.shared.saveAlbumInLibrary(
+                    album: strongSelf.album) { success in
+                        if success {
+                            NotificationCenter.default.post(name: .savedAlbumNotification, object: nil)
+                        }
+                    }
+            }))
+        present(actionSheet, animated: true, completion: nil)
+            }
+            
+    
+    private func fetchData(){
         APICaller.shared.getAlbumDetails(for: album) { [weak self] result in
             DispatchQueue.main.async {
                 switch result{

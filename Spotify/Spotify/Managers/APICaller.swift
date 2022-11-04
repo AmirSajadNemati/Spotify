@@ -53,6 +53,7 @@ final class APICaller{
         case POST
         case GET
         case DELETE
+        case PUT
     }
     
     
@@ -135,6 +136,7 @@ final class APICaller{
                       type: .GET) { request in
             let task = URLSession.shared.dataTask(with: request) { data, _, error in
                 guard let data = data , error == nil else {
+
                     completion(.failure(APIError.failedToGetData))
                     return
                 }
@@ -145,7 +147,7 @@ final class APICaller{
                     completion(.success(result))
                 }
                 catch {
-                    print(error)
+                    print(error.localizedDescription + "newrelease")
                     completion(.failure(error))
                 }
                 
@@ -175,6 +177,55 @@ final class APICaller{
             }
             task.resume()
         }
+    }
+    
+    public func getCurentUserAlbums(completion: @escaping (Result<[Album], Error> ) -> Void) {
+        createRequest(with: URL(string: Constants.baseAPIURL + "/me/albums"),
+                      type: .GET) { baseRequest in
+            
+            let task = URLSession.shared.dataTask(with: baseRequest) { data, _, error in
+                guard let data = data , error == nil else {
+                    
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                
+                do {
+
+                    let result = try JSONDecoder().decode(LibraryAlbumsResponse.self, from: data)
+                    completion(.success(result.items.compactMap({ $0.album })))
+                }
+                catch{
+                    
+                    print(error)
+                    completion(.failure(error))
+                }
+                
+            }
+            task.resume()
+        }
+    }
+    
+    public func saveAlbumInLibrary(album: Album, completion: @escaping(Bool) -> Void ){
+        createRequest(with: URL(
+            string: Constants.baseAPIURL + "/me/albums?ids=\(album.id)"),
+                      type: .PUT) { baseRequest in
+            var request = baseRequest
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                guard error == nil,
+                      let code = (response as? HTTPURLResponse)?.statusCode else {
+                          completion(false)
+                          return 
+                      }
+                
+                completion(code == 200)
+                      
+            }
+            task.resume()
+        
+        }
+        
     }
     
     public func getPlaylistDetails(for playlist: PlayList, completion: @escaping (Result<PlaylistDetailsResponse, Error>) -> Void){
@@ -224,7 +275,7 @@ final class APICaller{
             switch result{
             case .success(let profile):
                 let urlString = URL(string: Constants.baseAPIURL + "/users/\(profile.id)/playlists")
-                print(urlString)
+                
                 self?.createRequest(with: urlString,
                                     type: .POST,
                                     completion: { baseRequest in
@@ -233,7 +284,6 @@ final class APICaller{
                         "name": name
                     ]
                     request.httpBody = try? JSONSerialization.data(withJSONObject: json, options: .fragmentsAllowed)
-                    print("Starting Creation...")
                     
                     let task = URLSession.shared.dataTask(with: request) { data, _, error in
                         
@@ -277,7 +327,8 @@ final class APICaller{
                 with: request,
                 completionHandler: { data, _, error in
                     guard let data = data, error == nil else {
-                        print(APIError.failedToGetData)
+                        print(APIError.failedToGetData )
+                        print("addtrack")
                         completion(false)
                         return
                     }

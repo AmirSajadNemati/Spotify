@@ -171,14 +171,13 @@ extension LibraryPlaylistsViewController: UITableViewDelegate, UITableViewDataSo
         vc.title = playlist.name
         vc.view.backgroundColor = .systemBackground
         vc.navigationItem.largeTitleDisplayMode = .never
-            APICaller.shared.getCurrentUserProfile {[weak self] result in
+            APICaller.shared.getCurrentUserProfile { result in
                 DispatchQueue.main.async {
                         switch result{
                         case .success(let profile):
                             if playlist.owner.display_name == profile.display_name {
                                 vc.isOwner = true
                             }
-                            print("\(playlist.owner.display_name) = \(profile.display_name)")
                         case .failure(let error):
                             print(error.localizedDescription)
                         }
