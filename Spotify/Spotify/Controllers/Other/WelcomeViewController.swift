@@ -11,11 +11,44 @@ class WelcomeViewController: UIViewController {
 
     private let signInButton: UIButton = {
        let button = UIButton()
-        button.backgroundColor = .white
+        button.backgroundColor = .systemGreen
+        button.layer.cornerRadius = 5
+        button.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         button.setTitle("Sign in with spotify", for: .normal)
-        button.setTitleColor(.blue, for: .normal)
+        button.setTitleColor(.black, for: .normal)
         
         return button
+    }()
+    
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "background_image"))
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+        
+    }()
+    
+    private let overlayView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        view.alpha = 0.7
+        return view
+    }()
+    
+    private let label: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 32, weight: .semibold)
+        label.text = "Listen to Millions\nof Songs on the go."
+        return label
+    }()
+    
+    
+    private let logoImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "welcome_logo"))
+        imageView.contentMode = .scaleAspectFit
+        return imageView
     }()
     
     override func viewDidLoad() {
@@ -23,6 +56,10 @@ class WelcomeViewController: UIViewController {
 
         title = "Spotify"
         view.backgroundColor = .systemGreen
+        view.addSubview(backgroundImageView)
+        view.addSubview(overlayView)
+        view.addSubview(logoImageView)
+        view.addSubview(label)
         view.addSubview(signInButton)
         signInButton.addTarget(self, action: #selector(didTapSignIn), for: .touchUpInside)
     }
@@ -34,6 +71,19 @@ class WelcomeViewController: UIViewController {
             y: view.height - 50 - view.safeAreaInsets.bottom,
             width: view.width - 50,
             height: 50)
+        
+        backgroundImageView.frame = view.bounds
+        
+        overlayView.frame = view.bounds
+        
+        logoImageView.frame = CGRect(x: (view.width - 120) / 2,
+                                     y: (view.height - 300) / 2,
+                                     width: 120,
+                                     height: 120)
+        label.frame = CGRect(x: 30,
+                             y: logoImageView.bottom + 30,
+                             width: view.width - 60,
+                             height: 150)
         
     }
     
